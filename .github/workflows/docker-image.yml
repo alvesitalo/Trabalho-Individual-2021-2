@@ -16,6 +16,7 @@ defaults:
 
 jobs:
   build:
+    name: Build and Run
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -23,13 +24,15 @@ jobs:
         run: docker-compose up --build -d
 
   lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Lint
-        run: docker-compose run app bash -c "gem install rubocop; rubocop --fail-level F"
+      - name: Run lint
+        run: docker-compose run app bash -c "gem install rubocop; rubocop --fail-level error -F"
 
   test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -42,7 +45,7 @@ jobs:
     needs: [build, lint, test]
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Docker build
         run: docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
       - name: Publish
