@@ -30,3 +30,18 @@ jobs:
       - name: Run tests
         working-directory: ./aplicacao
         run: docker-compose run app bash -c "rake db:reset;rspec"
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Deploy to Heroku
+        id: heroku
+        uses: jctaveras/heroku-deploy@v3.1.0
+        with:
+          email: ${{ secrets.HEROKU_EMAIL }}
+          api_key: ${{ secrets.HEROKU_API_KEY }}
+          app_name: ${{ secrets.HEROKU_APP_NAME }}
+          dockerfile_path: "./aplicacao"
+          process_type: "web"
